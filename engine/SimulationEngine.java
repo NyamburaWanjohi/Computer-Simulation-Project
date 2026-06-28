@@ -170,6 +170,63 @@ public class SimulationEngine {
 
         customers = randomGenerator.generateCustomerBatch(customerCount);
 
+        // Phase 2: looping the list & computing each customer's timeline
+        //
+        //   previousArrivalTime    = AT_{i-1}
+        //   previousServiceEndTime = SET_{i-1}
+        //
+        // Before the first customer, both are 0:
+        //   AT_0  = 0   (no customer has arrived yet)
+        //   SET_0 = 0   (teller is free and waiting at the start of the day)
+
+        double previousArrivalTime    = 0.0;
+        double previousServiceEndTime = 0.0;
+
+        for (Customer customer : customers) {
+
+            // Read the randomly generated values Ivy already stored
+            double iat = customer.getInterArrivalTime();  // IAT_i — gap since last arrival
+            double st  = customer.getServiceTime();        // ST_i  — how long service takes
+
+            // Arrival Time  (AT_i)
+            //  Formula:  AT_i = AT_{i-1} + IAT_i
+            //
+            //  Each customer arrives exactly IAT_i minutes after the
+            //  previous one. Arrival times are therefore strictly increasing.
+            //
+            //  For the first customer: AT_1 = 0 + IAT_1 = IAT_1
+            //  (The first customer arrives IAT_1 minutes after the bank opens.)
+            double arrivalTime = previousArrivalTime + iat;
+            customer.setArrivalTime(arrivalTime);
+
+            // Service Start Time  (SST_i)
+            //  Formula:  SST_i = max(AT_i, SET_{i-1})
+            double serviceStartTime = Math.max(arrivalTime, previousServiceEndTime);
+            customer.setServiceStartTime(serviceStartTime);
+
+            // Service End Time  (SET_i)
+            //  Formula:  SET_i = SST_i + ST_i
+            double serviceEndTime = serviceStartTime + st;
+            customer.setServiceEndTime(serviceEndTime);
+
+            // Waiting Time  (WT_i)
+            //  Formula:  WT_i = SST_i - AT_i
+            double waitingTime = serviceStartTime - arrivalTime;
+            customer.setWaitingTime(waitingTime);
+
+            // Total Time in System  (TS_i)
+            //  Formula:  TS_i = SET_i - AT_i
+            double timeInSystem = serviceEndTime - arrivalTime;
+            customer.setTimeInSystem(timeInSystem);
+
+            // Clock Advance
+            //  Stores this customer's values so the NEXT iteration can
+            //  reference them as AT_{i-1} and SET_{i-1}.
+            // ----------------------------------------------------------
+            previousArrivalTime    = arrivalTime;
+            previousServiceEndTime = serviceEndTime;
+        }
+
         hasRun = true;
         return customers;
     };
