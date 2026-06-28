@@ -119,4 +119,37 @@ public class SimulationEngine {
         this.customers       = null;
         this.hasRun          = false;
     }
+
+    // main simulation method
+
+    /**
+     * Runs the full discrete-event simulation.
+     *
+     * Executes in two clear phases:
+     *
+     *   PHASE 1 — Data Generation (Done by Ivy):
+     *     Calls RandomGenerator.generateCustomerBatch() to obtain a list of
+     *     Customer objects that already have their ID, IAT, and ST set.
+     *     This engine does not create Customer objects or sample random values.
+     *
+     *   PHASE 2 — Timeline Computation (I am doing this in this code):
+     *     Iterates through the pre-loaded customer list in sequence.
+     *     For each customer, computes AT, SST, SET, WT, and TS using the
+     *     chronological equations from the project specification, then writes
+     *     the results back to the Customer object using Ivy's setters.
+     *
+     *     @return  an unmodifiable view of the fully processed customer list
+     */
+    public List<Customer> runSimulation() {
+        // Guard preventing double-running
+        if (hasRun) {
+            throw new IllegalStateException(
+                    "This SimulationEngine has already been run.\n" +
+                            "Create a new SimulationEngine instance to start a fresh simulation."
+            );
+        }
+
+        hasRun = true;
+        return customers;
+    };
 }
