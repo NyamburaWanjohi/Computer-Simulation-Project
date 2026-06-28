@@ -3,6 +3,7 @@ package engine;
 import model.Customer;
 import util.RandomGenerator;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -229,5 +230,41 @@ public class SimulationEngine {
 
         hasRun = true;
         return customers;
-    };
+    }
+
+    // Public Accessors
+
+    /**
+     * Returns the complete, processed list of Customer records.
+     *
+     * Every customer in this list has all eight fields populated:
+     *   ID, IAT, ST  →  set by Ivy's generateCustomerBatch()
+     *   AT, SST, SET, WT, TS  →  set by this engine's runSimulation()
+     *
+     * @return  unmodifiable list of all Customer records in arrival order
+     * @throws  IllegalStateException if runSimulation() has not been called yet
+     */
+
+    public List<Customer> getCustomers() {
+        if (!hasRun) {
+            throw new IllegalStateException(
+                    "No results available yet. Call runSimulation() first."
+            );
+        }
+        return Collections.unmodifiableList(customers);
+    }
+
+    /**
+     * Returns the number of customers this engine was configured to simulate.
+     */
+    public int getCustomerCount() {
+        return customerCount;
+    }
+
+    /**
+     * Returns true if runSimulation() has already completed successfully.
+     */
+    public boolean hasRun() {
+        return hasRun;
+    }
 }
