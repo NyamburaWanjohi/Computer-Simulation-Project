@@ -1,5 +1,10 @@
 package engine;
 
+import model.Customer;
+import util.RandomGenerator;
+
+import java.util.List;
+
 /**
  * ============================================================
  *
@@ -59,8 +64,8 @@ package engine;
  *    Ivy  →  Customer.java, RandomGenerator.java
  *
  *  Output goes to:
- *    Obuya  →  List<Customer>   [for analytics]
- *    Bridget  →  List<Customer>   [for JTable display]
+ *    Obuya  →  List<Customer> via getCustomers()   [for analytics]
+ *    Bridget  →  List<Customer> via getCustomers()   [for JTable display]
  *
  *  NOTE ON IAT/ST BOUNDS:
  *    The distribution bounds [1,8] for IAT and [1,6] for ST are currently
@@ -73,4 +78,45 @@ package engine;
 
 
 public class SimulationEngine {
+
+    // fields
+
+    /** How many customers to simulate.*/
+    private final int customerCount;
+
+    /**
+     * Ivy's random generator.
+     * Used to produce the pre-loaded List<Customer> with IAT and ST already set.
+     */
+    private final RandomGenerator randomGenerator;
+
+    /** Holds the fully processed customer records*/
+    private List<Customer> customers;
+
+    /**
+     * Prevents runSimulation() from being called twice on the same engine instance.
+     * Running twice would corrupt results since the random generator's internal
+     * state would have already advanced past its starting position.
+     */
+    private boolean hasRun;
+
+
+    // constructor
+
+    /**
+     * Creates a SimulationEngine ready to simulate the given number of customers.
+     *
+     * @param customerCount  number of customers to simulate (e.g. 100)
+     */
+    public SimulationEngine(int customerCount) {
+        if (customerCount <= 0) {
+            throw new IllegalArgumentException(
+                    "Customer count must be a positive integer. Received: " + customerCount
+            );
+        }
+        this.customerCount   = customerCount;
+        this.randomGenerator = new RandomGenerator(); // Ivy's generator
+        this.customers       = null;
+        this.hasRun          = false;
+    }
 }
