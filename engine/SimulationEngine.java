@@ -229,7 +229,7 @@ public class SimulationEngine {
         }
 
         hasRun = true;
-        return customers;
+        return Collections.unmodifiableList(customers);
     }
 
     // Public Accessors
