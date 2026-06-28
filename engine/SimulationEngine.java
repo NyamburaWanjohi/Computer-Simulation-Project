@@ -149,6 +149,27 @@ public class SimulationEngine {
             );
         }
 
+        // Phase 1 - Receives the pre-generated customer batch
+        //
+        // Ivy's generateCustomerBatch() does the following internally:
+        //   - Creates customerCount Customer objects
+        //   - Assigns each a sequential ID (1, 2, 3, ..., N)
+        //   - Samples IAT ~ Uniform(1, 8) for each customer
+        //   - Samples ST  ~ Uniform(1, 6) for each customer
+        //   - Returns them as a list of customers
+        //
+        // When we receive this list, each customer has:
+        //   ✓  id                 — set
+        //   ✓  interArrivalTime   — set (accessible via getInterArrivalTime())
+        //   ✓  serviceTime        — set (accessible via getServiceTime())
+        //   ✗  arrivalTime        — 0.0 (populated in Phase 2)
+        //   ✗  serviceStartTime   — 0.0  ''
+        //   ✗  serviceEndTime     — 0.0  ''
+        //   ✗  waitingTime        — 0.0  ''
+        //   ✗  timeInSystem       — 0.0  ''
+
+        customers = randomGenerator.generateCustomerBatch(customerCount);
+
         hasRun = true;
         return customers;
     };
