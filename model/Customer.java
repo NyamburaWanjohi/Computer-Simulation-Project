@@ -1,3 +1,5 @@
+package model;
+
 public class Customer {
     // ---(Initialization of variables that will be generated)---
     private int id;

@@ -1,0 +1,5 @@
+# Output Dump
+**/out/**
+
+# Secrets
+**.env

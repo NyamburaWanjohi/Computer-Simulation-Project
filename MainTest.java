@@ -1,3 +1,6 @@
+import model.Customer;
+import util.RandomGenerator;
+
 import java.util.List;
 
 public class MainTest {
